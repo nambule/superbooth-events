@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Superbooth 2026 — Events</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #ffffff;
+    --bg: #f8f8f8;
+    --blue:   #1d6ff2;
+    --blue2:  #0047cc;
+    --teal:   #00b8a9;
+    --lime:   #84cc16;
+    --orange: #ff6b00;
+    --yellow: #fbbf24;
+    --fav:    #ff6b00;
+    --ink: #111111;
+    --ink-light: #444444;
+    --ink-faint: #888888;
+    --border: #e5e5e5;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font-family:'Lato',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:3.5rem; }
+
+  /* Header */
+  header { background:var(--white); border-bottom:2px solid var(--ink); padding:0 2.5rem; position:sticky; top:0; z-index:100; }
+  .header-inner { max-width:1180px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:72px; gap:2rem; }
+  .logo-block { line-height:1.2; }
+  .logo-title { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--ink); }
+  .logo-title span { color:var(--blue); }
+  .logo-sub { font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.1em; text-transform:uppercase; margin-top:1px; }
+  .header-right { display:flex; align-items:center; gap:1rem; }
+  .date-pill { font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--white); background:var(--ink); padding:0.38rem 1rem; border-radius:20px; }
+  .fav-count-btn { display:flex; align-items:center; gap:0.4rem; background:var(--orange); border:none; cursor:pointer; color:white; font-family:'Lato',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.04em; padding:0.4rem 1rem; border-radius:20px; transition:opacity 0.18s; }
+  .fav-count-btn:hover { opacity:0.85; }
+
+  /* Hero */
+  .hero-band { background:var(--white); border-bottom:1px solid var(--border); padding:2.5rem 2.5rem 2rem; text-align:center; position:relative; overflow:hidden; }
+  .hero-band::before { content:''; position:absolute; width:340px; height:340px; border-radius:50%; background:var(--blue); opacity:0.07; top:-120px; left:-80px; pointer-events:none; }
+  .hero-band::after { content:''; position:absolute; width:260px; height:260px; border-radius:50%; background:var(--blue2); opacity:0.07; bottom:-100px; right:-60px; pointer-events:none; }
+  .hero-eyebrow { display:inline-block; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--white); background:var(--blue2); font-weight:700; padding:0.25rem 0.85rem; border-radius:20px; margin-bottom:1rem; }
+  .hero-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3.4rem); font-weight:700; color:var(--ink); line-height:1.12; margin-bottom:0.5rem; }
+  .hero-title em { font-style:italic; font-weight:400; color:var(--blue); }
+  .hero-sub { font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--ink-faint); font-style:italic; }
+
+  /* Tabs for days */
+  .day-tabs { background:var(--white); border-bottom:2px solid var(--border); padding:0 2.5rem; position:sticky; top:72px; z-index:91; display:flex; gap:0; }
+  .day-tab { padding:1rem 1.5rem; font-size:0.82rem; font-weight:700; cursor:pointer; border:none; background:none; color:var(--ink-faint); border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.15s; letter-spacing:0.02em; }
+  .day-tab:hover { color:var(--blue); }
+  .day-tab.active { color:var(--blue); border-bottom-color:var(--blue); }
+
+  /* Filter bar */
+  .filter-bar { background:var(--bg); border-bottom:1px solid var(--border); padding:0.85rem 2.5rem; position:sticky; top:125px; z-index:90; }
+  .filter-inner { max-width:1180px; margin:0 auto; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+  .filter-label { font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; margin-right:0.25rem; }
+  .pill { background:none; border:1.5px solid var(--border); color:var(--ink-light); font-family:'Lato',sans-serif; font-size:0.74rem; font-weight:700; padding:0.3rem 0.9rem; border-radius:20px; cursor:pointer; transition:all 0.15s; }
+  .pill:hover { border-color:var(--blue); color:var(--blue); background:rgba(29,111,242,0.05); }
+  .pill.active { background:var(--blue); border-color:var(--blue); color:white; }
+  .pill[data-filter="favorites"].active { background:var(--orange); border-color:var(--orange); }
+  .pill[data-filter="favorites"]:hover { border-color:var(--orange); color:var(--orange); background:rgba(255,107,0,0.05); }
+
+  /* Main */
+  main { max-width:1180px; margin:0 auto; padding:2rem 2.5rem; }
+  .day-section { display:none; }
+  .day-section.active { display:block; }
+
+  .day-header { display:flex; align-items:center; gap:1.25rem; margin-bottom:1.75rem; }
+  .day-header h2 { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--ink); white-space:nowrap; }
+  .day-header .count-badge { font-size:0.78rem; color:var(--ink-faint); background:var(--border); padding:0.2rem 0.65rem; border-radius:20px; }
+  .day-header::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* Grid */
+  .events-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.1rem; }
+
+  /* Card */
+  .event-card { background:var(--white); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; transition:box-shadow 0.2s,transform 0.2s; display:flex; flex-direction:column; position:relative; animation:rise 0.35s ease both; }
+  @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .event-card:hover { box-shadow:0 6px 28px rgba(0,0,0,0.09); transform:translateY(-2px); }
+  .event-card.favorited { border-color:var(--orange); box-shadow:0 0 0 2px var(--orange); }
+  .event-card.favorited::after { content:'♥ Saved'; position:absolute; top:12px; right:-1px; background:var(--orange); color:white; font-family:'Lato',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; padding:0.2rem 0.55rem 0.2rem 0.48rem; border-radius:4px 0 0 4px; pointer-events:none; z-index:3; }
+  .event-card.favorited .card-title { color:var(--orange); }
+  .event-card.favorited .fav-btn { background:var(--orange); border-color:var(--orange); color:white; }
+  .event-card.hidden { display:none; }
+
+  /* Card band */
+  .card-band { height:4px; flex-shrink:0; }
+  .cat-diy      .card-band { background:var(--orange); }
+  .cat-flinta   .card-band { background:var(--teal); }
+  .cat-workshop .card-band { background:var(--blue2); }
+  .cat-concert  .card-band { background:var(--blue); }
+  .cat-lecture  .card-band { background:var(--lime); }
+  .cat-talk     .card-band { background:var(--yellow); }
+  .cat-radio    .card-band { background:#a855f7; }
+  .cat-ambient  .card-band { background:var(--teal); }
+  .cat-evening  .card-band { background:#e11d48; }
+  .cat-special  .card-band { background:var(--ink-faint); }
+
+  .card-body { padding:1.1rem 1.3rem 1rem; flex:1; display:flex; flex-direction:column; }
+  .card-meta { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.65rem; flex-wrap:wrap; }
+  .card-time { font-size:0.7rem; font-weight:700; color:var(--ink-light); background:var(--bg); padding:0.16rem 0.5rem; border-radius:6px; }
+  .meta-dot { width:3px; height:3px; border-radius:50%; background:var(--border); flex-shrink:0; }
+  .card-venue { font-family:'Cormorant Garamond',serif; font-size:0.88rem; color:var(--ink-faint); font-style:italic; }
+  .type-tag { margin-left:auto; font-size:0.58rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; padding:0.18rem 0.55rem; border-radius:20px; color:white; flex-shrink:0; }
+  .cat-diy      .type-tag { background:var(--orange); }
+  .cat-flinta   .type-tag { background:var(--teal); }
+  .cat-workshop .type-tag { background:var(--blue2); }
+  .cat-concert  .type-tag { background:var(--blue); }
+  .cat-lecture  .type-tag { background:var(--lime); color:#1a3a00; }
+  .cat-talk     .type-tag { background:var(--yellow); color:#5a3800; }
+  .cat-radio    .type-tag { background:#a855f7; }
+  .cat-ambient  .type-tag { background:var(--teal); }
+  .cat-evening  .type-tag { background:#e11d48; }
+  .cat-special  .type-tag { background:var(--ink-faint); }
+
+  .card-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--ink); line-height:1.25; margin-bottom:0.5rem; transition:color 0.15s; }
+
+  /* Description */
+  .card-desc { font-size:0.81rem; line-height:1.7; color:var(--ink-light); font-weight:300; padding:0.5rem 0 0.75rem; }
+
+  /* Footer */
+  .card-footer { display:flex; align-items:center; justify-content:space-between; padding-top:0.75rem; border-top:1px solid var(--border); margin-top:auto; gap:0.5rem; }
+  .sb-link { font-size:0.68rem; font-weight:700; color:var(--white); background:var(--blue); padding:0.26rem 0.7rem; border-radius:20px; text-decoration:none; transition:background 0.15s; flex-shrink:0; }
+  .sb-link:hover { background:var(--blue2); }
+  .fav-btn { display:flex; align-items:center; gap:0.35rem; background:none; border:1.5px solid var(--border); color:var(--ink-faint); font-family:'Lato',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.04em; padding:0.28rem 0.8rem; border-radius:20px; cursor:pointer; transition:all 0.15s; white-space:nowrap; flex-shrink:0; }
+  .fav-btn:hover { border-color:var(--orange); color:var(--orange); background:rgba(255,107,0,0.05); }
+  .fav-btn.active { background:var(--orange); border-color:var(--orange); color:white; }
+
+
+  /* No results */
+  .no-results { display:none; text-align:center; padding:3rem 2rem; font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-style:italic; color:var(--ink-faint); }
+
+  /* Page footer */
+  .page-footer { background:var(--ink); color:#666; text-align:center; padding:1rem; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; position:fixed; bottom:0; left:0; right:0; z-index:100; }
+  .page-footer em { color:var(--blue); font-style:normal; }
+
+  /* All-days view: space between day blocks */
+  .day-section[data-day="all"] .day-header { margin-top:2.5rem; }
+  .day-section[data-day="all"] .day-header:first-child { margin-top:0; }
+
+  @media (max-width:700px) {
+    .events-grid { grid-template-columns:1fr; }
+    header,.filter-bar,.day-tabs,main,.hero-band { padding-left:1.25rem; padding-right:1.25rem; }
+    .day-tab { padding:0.9rem 0.9rem; font-size:0.76rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-block">
+      <div class="logo-title">Superbooth <span>2026</span></div>
+      <div class="logo-sub">Pionierpalast · Berlin</div>
+    </div>
+    <div class="header-right">
+      <div class="date-pill">7 – 9 May 2026</div>
+      <button class="fav-count-btn" id="favCountBtn">
+        <span>♥</span><span id="favCountText">My favourites</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="hero-band">
+  <div class="hero-eyebrow">Superbooth 2026 · Berlin</div>
+  <h1 class="hero-title">All Events <em>&amp; Programme</em></h1>
+  <p class="hero-sub">106 events across three days — click any card to read more</p>
+</div>
+
+<div class="day-tabs">
+  <button class="day-tab" data-day="all">All Days</button>
+  <button class="day-tab active" data-day="Thursday May 7th">Thursday 7 May</button>
+  <button class="day-tab" data-day="Friday May 8th">Friday 8 May</button>
+  <button class="day-tab" data-day="Saturday May 9th">Saturday 9 May</button>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">Filter</span>
+    <button class="pill active" data-filter="all">All</button>
+    <button class="pill" data-filter="concert">Concerts</button>
+    <button class="pill" data-filter="diy">DIY Workshops</button>
+    <button class="pill" data-filter="workshop">Workshops</button>
+    <button class="pill" data-filter="flinta">FLINTA*</button>
+    <button class="pill" data-filter="lecture">Lecture Concerts</button>
+    <button class="pill" data-filter="talk">Talks</button>
+    <button class="pill" data-filter="evening">Evening</button>
+    <button class="pill" data-filter="radio">Radio</button>
+    <button class="pill" data-filter="favorites">♥ Saved</button>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<div class="page-footer">
+  Superbooth 2026 · Pionierpalast Berlin · <em>7 – 9 May</em>
+</div>
+
+<script>
+(function() {
+  const BASE_URL = 'https://www.superbooth.com/en/events/details/';
+  const EVENTS = {"Thursday May 7th": [{"time": "10:00 am", "venue": "Main Entrance", "title": "The Abstract Earth", "slug": "the-abstract-earth.html", "category": "concert"}, {"time": "10:00 am", "venue": "SooperRADIO", "title": "SooperRadio: Radio Woltersdorf & PiRadio", "slug": "sooperradio-radio-woltersdorf-piradio-2.html", "category": "radio"}, {"time": "10:00 am", "venue": "Sooper Corner", "title": "Ambient Dub Café till noon", "slug": "ambient-dub-cafe-till-noon-2.html", "category": "ambient"}, {"time": "11:00 am", "venue": "DIY-Area", "title": "DIY Workshop - Zlob Modular", "slug": "diy-workshop-zlob-modular.html", "category": "diy"}, {"time": "11:00 am", "venue": "DIY-Area", "title": "DIY Workshop - Tubbutec", "slug": "diy-workshop-tubbutec.html", "category": "diy"}, {"time": "11:00 am", "venue": "Flinta*Area", "title": "FLINTA* Workshop for Modular Beginners (auf Deutsch)", "slug": "flinta-workshop-for-modular-beginners-auf-deutsch.html", "category": "flinta"}, {"time": "11:00 am", "venue": "Kino", "title": "Modular Beginner Workshop", "slug": "modular-beginner-workshop-6.html", "category": "workshop"}, {"time": "11:00 am", "venue": "Seebühne", "title": "Sacha Ketterlin", "slug": "sacha-ketterlin-3.html", "category": "concert"}, {"time": "12:30 pm", "venue": "Workshop Room", "title": "Workshop - DSP-Dealer", "slug": "workshop-dsp-dealer.html", "category": "workshop"}, {"time": "12:40 pm", "venue": "Sooper Corner", "title": "LXC + Toni Wobble", "slug": "lxc-b2b-toni-wobble.html", "category": "concert"}, {"time": "1:00 pm", "venue": "Seebühne", "title": "VMO - Volca Massaker Orchester", "slug": "volca-massaker-orcherster.html", "category": "concert"}, {"time": "1:30 pm", "venue": "Auditorium", "title": "Modular Synthesizer Ensemble", "slug": "modular-synthesizer-ensemble-13.html", "category": "workshop"}, {"time": "2:00 pm", "venue": "Strandbühne", "title": "Korg Berlin - Live Presentation", "slug": "korg-berlin-live-presentation.html", "category": "concert"}, {"time": "2:30 pm", "venue": "Kino", "title": "Gesprächskonzert - u-he", "slug": "gespraechskonzert-u-he-7.html", "category": "lecture"}, {"time": "2:40 pm", "venue": "Sooper Corner", "title": "DjBadshape", "slug": "djbadshape.html", "category": "concert"}, {"time": "3:00 pm", "venue": "Flinta*Area", "title": "FLINTA* Workshop - Sequencing Techniques in Modular Synthesizers", "slug": "flinta-workshop-sequencing-techniques-in-modular-synthesizers.html", "category": "flinta"}, {"time": "3:00 pm", "venue": "DIY-Area", "title": "DIY Workshop - LeafAudio", "slug": "diy-workshop-leafaudio-3.html", "category": "diy"}, {"time": "3:00 pm", "venue": "DIY-Area", "title": "DIY Workshop - Thonk Synth", "slug": "diy-workshop-thonk-synth.html", "category": "diy"}, {"time": "3:00 pm", "venue": "Stromkult Stage", "title": "Stromkult - In Conversation with Anna Z", "slug": "stromkult-in-conversation-with-anna-z.html", "category": "talk"}, {"time": "3:00 pm", "venue": "Seebühne", "title": "Nika Son", "slug": "nika-son.html", "category": "concert"}, {"time": "3:30 pm", "venue": "Workshop Room", "title": "Workshop - Bitwig", "slug": "workshop-bitwig-4.html", "category": "workshop"}, {"time": "3:30 pm", "venue": "Kino", "title": "Gesprächskonzert - DSP Dealer", "slug": "gespraechskonzert-dsp-dealer.html", "category": "lecture"}, {"time": "4:00 pm", "venue": "Tonarium/Studiobühne", "title": "Tymek Papior", "slug": "tymek-papior.html", "category": "concert"}, {"time": "4:00 pm", "venue": "Strandbühne", "title": "TBA", "slug": "tba-2.html", "category": "concert"}, {"time": "4:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Erica Synths", "slug": "gespraechskonzert-erica-synths-4.html", "category": "lecture"}, {"time": "4:40 pm", "venue": "Sooper Corner", "title": "Banu", "slug": "banu.html", "category": "concert"}, {"time": "5:00 pm", "venue": "Stromkult Stage", "title": "Stromkult - In Conversation with SchneidersLaden Berlin", "slug": "stromkult-in-conversation-with-schneidersladen-berlin.html", "category": "talk"}, {"time": "5:00 pm", "venue": "Seebühne", "title": "Electric Indigo", "slug": "electric-indigo.html", "category": "concert"}, {"time": "5:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Ploytec", "slug": "gespraechskonzert-ploytec-7.html", "category": "lecture"}, {"time": "6:00 pm", "venue": "Strandbühne", "title": "Surgeons Girl", "slug": "surgeons-girl.html", "category": "concert"}, {"time": "6:40 pm", "venue": "Sooper Corner", "title": "Alex Solman + Resom", "slug": "alex-solman-resom.html", "category": "concert"}, {"time": "7:00 pm", "venue": "Seebühne", "title": "WSNWG [LIVE] - Rødhåd + Lady Starlight", "slug": "wsnwg-live-rodhad-lady-starlight.html", "category": "concert"}, {"time": "8:00 pm", "venue": "Strandbühne", "title": "Anna Z + J. Manuel", "slug": "anna-z-j-manuel.html", "category": "concert"}, {"time": "9:00 pm", "venue": "Waldkater", "title": "Aftershow w/ Acida Dominga + Sam Rouanet", "slug": "aftershow-w-acida-dominga-sam-rouanet.html", "category": "evening"}], "Friday May 8th": [{"time": "10:00 am", "venue": "Main Entrance", "title": "The Abstract Earth", "slug": "the-abstract-earth-2.html", "category": "concert"}, {"time": "10:00 am", "venue": "SooperRADIO", "title": "SooperRadio: Radio Woltersdorf & PiRadio", "slug": "sooperradio-radio-woltersdorf-piradio-3.html", "category": "radio"}, {"time": "10:00 am", "venue": "Sooper Corner", "title": "Ambient Dub Café till noon", "slug": "ambient-dub-cafe-till-noon-3.html", "category": "ambient"}, {"time": "11:00 am", "venue": "DIY-Area", "title": "DIY Workshop - Touellskouarn", "slug": "diy-workshop-touellskouarn-2.html", "category": "diy"}, {"time": "11:00 am", "venue": "DIY-Area", "title": "DIY Workshop - Error Instruments", "slug": "diy-workshop-error-instruments-2.html", "category": "diy"}, {"time": "11:00 am", "venue": "Kino", "title": "Modular Beginner Workshop", "slug": "modular-beginner-workshop-5.html", "category": "workshop"}, {"time": "11:00 am", "venue": "Flinta*Area", "title": "FLINTA* for Modular Beginners", "slug": "flinta-for-modular-beginners.html", "category": "flinta"}, {"time": "11:00 am", "venue": "Seebühne", "title": "Sonia Killmann", "slug": "sonia-killmann.html", "category": "concert"}, {"time": "12:40 pm", "venue": "Sooper Corner", "title": "Tony Miln", "slug": "tony-miln.html", "category": "concert"}, {"time": "1:00 pm", "venue": "Stromkult Stage", "title": "Stromkult - In Conversation with Polygonia", "slug": "stromkult-in-conversation-with-polygonia.html", "category": "talk"}, {"time": "1:00 pm", "venue": "Seebühne", "title": "Surgeons Girl + Diego Nogueras + Oora", "slug": "surgeons-girl-diego-nogueras-oora.html", "category": "concert"}, {"time": "1:30 pm", "venue": "Workshop Room", "title": "Workshop - Bitwig", "slug": "workshop-bitwig-3.html", "category": "workshop"}, {"time": "1:30 pm", "venue": "Auditorium", "title": "Modular Synthesizer Ensemble", "slug": "modular-synthesizer-ensemble-12.html", "category": "workshop"}, {"time": "2:00 pm", "venue": "Strandbühne", "title": "Die Stadt der Zukunft", "slug": "die-stadt-der-zukunft.html", "category": "concert"}, {"time": "2:00 pm", "venue": "Tonarium/Studiobühne", "title": "C&D - Piotr Ceglarek and Jan Dybala", "slug": "c-d-piotr-ceglarek-and-jan-dybala.html", "category": "concert"}, {"time": "2:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Nonlinear Labs", "slug": "gespraechskonzert-nonlinear-labs-4.html", "category": "lecture"}, {"time": "2:40 pm", "venue": "Sooper Corner", "title": "Snow", "slug": "snow.html", "category": "concert"}, {"time": "3:00 pm", "venue": "Stromkult Stage", "title": "Stromkult - In Conversation with Verbos Electronics", "slug": "stromkult-in-conversation-with-verbos-electronics.html", "category": "talk"}, {"time": "3:00 pm", "venue": "DIY-Area", "title": "DIY Workshop - Bastl Instruments", "slug": "diy-workshop-bastl-instruments.html", "category": "diy"}, {"time": "3:00 pm", "venue": "DIY-Area", "title": "DIY Workshop - Shakmat", "slug": "diy-workshop-shakmat-4.html", "category": "diy"}, {"time": "3:00 pm", "venue": "Seebühne", "title": "Panic Girl", "slug": "panic-girl.html", "category": "concert"}, {"time": "3:00 pm", "venue": "Flinta*Area", "title": "FLINTA* Workshop - An On Bast: Hardware Live Setups", "slug": "flinta-workshop-shaping-your-hardware-live-set.html", "category": "flinta"}, {"time": "3:30 pm", "venue": "Workshop Room", "title": "Workshop - DSP-Dealer", "slug": "workshop-dsp-dealer-2.html", "category": "workshop"}, {"time": "3:30 pm", "venue": "Kino", "title": "Gesprächskonzert - FRAKnoise", "slug": "gespraechskonzert-fraknoise.html", "category": "lecture"}, {"time": "4:00 pm", "venue": "Strandbühne", "title": "Jessica Kert", "slug": "jessica-kert-4.html", "category": "concert"}, {"time": "4:00 pm", "venue": "Tonarium/Studiobühne", "title": "biøs- Jakub Mokrzysiak", "slug": "bios-jakub-mokrzysiak.html", "category": "concert"}, {"time": "4:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Tubbutec", "slug": "gespraechskonzert-tubbutec.html", "category": "lecture"}, {"time": "4:40 pm", "venue": "Sooper Corner", "title": "Perera Elsewhere", "slug": "perera-elsewhere.html", "category": "concert"}, {"time": "5:00 pm", "venue": "Stromkult Stage", "title": "Stromkult - In Conversation with Eowave", "slug": "stromkult-in-conversation-with-eowave.html", "category": "talk"}, {"time": "5:00 pm", "venue": "Seebühne", "title": "Monolake", "slug": "monolake.html", "category": "concert"}, {"time": "5:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Weston Precision Audio", "slug": "gespraechskonzert-weston.html", "category": "lecture"}, {"time": "6:00 pm", "venue": "Strandbühne", "title": "M. Takara & Carla Boregas", "slug": "m-takara-carla-boregas.html", "category": "concert"}, {"time": "6:40 pm", "venue": "Sooper Corner", "title": "Murat Tepeli", "slug": "murat-tepeli.html", "category": "concert"}, {"time": "7:00 pm", "venue": "Seebühne", "title": "Anushka Chkheidze", "slug": "anushka-chkheidze.html", "category": "concert"}, {"time": "8:00 pm", "venue": "Strandbühne", "title": "Polygonia", "slug": "polygonia-2.html", "category": "concert"}, {"time": "9:00 pm", "venue": "Waldkater", "title": "Aftershow w/ lil.lili + Resom b2b Don Williams", "slug": "aftershow-w-lil-lili-resom-b2b-don-williams.html", "category": "evening"}], "Saturday May 9th": [{"time": "10:00 am", "venue": "Main Entrance", "title": "The Abstract Earth", "slug": "the-abstract-earth-kopie-2.html", "category": "concert"}, {"time": "10:00 am", "venue": "SooperRADIO", "title": "SooperRadio: Radio Woltersdorf & PiRadio", "slug": "sooperradio-radio-woltersdorf-piradio-4.html", "category": "radio"}, {"time": "10:00 am", "venue": "Sooper Corner", "title": "Ambient Dub Café till noon", "slug": "ambient-dub-cafe-till-noon-4.html", "category": "ambient"}, {"time": "11:00 am", "venue": "DIY-Area", "title": "DIY Workshop - Erica & Moritz Klein", "slug": "diy-workshop-mkl-x-erica-synths.html", "category": "diy"}, {"time": "11:00 am", "venue": "DIY-Area", "title": "DIY Workshop - ATOV", "slug": "diy-workshop-atov.html", "category": "diy"}, {"time": "11:00 am", "venue": "Seebühne", "title": "Andrea Cichecki", "slug": "andrea-cichecki.html", "category": "concert"}, {"time": "11:00 am", "venue": "Kino", "title": "Modular Beginner Workshop", "slug": "modular-beginner-workshop-4.html", "category": "workshop"}, {"time": "11:00 am", "venue": "Strandbühne", "title": "Alexander Spree - Meet Dr. Spree", "slug": "alexander-spree-meet-dr-spree.html", "category": "concert"}, {"time": "11:00 am", "venue": "Flinta*Area", "title": "Modular Beginner Workshop for FLINTA*", "slug": "modular-beginner-workshop-for-flinta-2.html", "category": "flinta"}, {"time": "12:30 pm", "venue": "Workshop Room", "title": "Workshop - DSP-Dealer", "slug": "workshop-dsp-dealer-3.html", "category": "workshop"}, {"time": "12:40 pm", "venue": "Sooper Corner", "title": "Aysun", "slug": "aysun.html", "category": "concert"}, {"time": "1:00 pm", "venue": "Stromkult Stage", "title": "Stromkult - Im Gespräch mit Doepfer Musikelektronik", "slug": "stromkult-im-gespraech-mit-doepfer-musikelektronik.html", "category": "lecture"}, {"time": "1:00 pm", "venue": "Seebühne", "title": "Philo Tsoungui", "slug": "philo-tsoungui.html", "category": "concert"}, {"time": "1:30 pm", "venue": "Auditorium", "title": "Modular Synthesizer Ensemble", "slug": "modular-synthesizer-ensemble-11.html", "category": "workshop"}, {"time": "2:00 pm", "venue": "Strandbühne", "title": "Braintheft", "slug": "braintheft.html", "category": "concert"}, {"time": "2:00 pm", "venue": "Wald", "title": "Youtube Fan Meetup", "slug": "youtube-fan-meetup-2.html", "category": "special"}, {"time": "2:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Ferry Island Modular", "slug": "gespraechskonzert-ferry-island-modular.html", "category": "lecture"}, {"time": "2:40 pm", "venue": "Sooper Corner", "title": "Masa Saji", "slug": "masahiko-saji.html", "category": "concert"}, {"time": "3:00 pm", "venue": "Stromkult Stage", "title": "Stromkult - In Conversation with WMD", "slug": "stromkult-in-conversation-with-wmd.html", "category": "talk"}, {"time": "3:00 pm", "venue": "DIY-Area", "title": "DIY Workshop - Befaco", "slug": "diy-workshop-befaco-4.html", "category": "diy"}, {"time": "3:00 pm", "venue": "DIY-Area", "title": "DIY Workshop - Music Thing Modular", "slug": "diy-workshop-music-thing-modular.html", "category": "diy"}, {"time": "3:00 pm", "venue": "Flinta*Area", "title": "FLINTA* Workshop - Modular Beats: Sound Architecture for Drums", "slug": "flinta-workshop-modular-beats-sound-architecture-for-drums-2.html", "category": "flinta"}, {"time": "3:00 pm", "venue": "Seebühne", "title": "Passepartout Duo", "slug": "passepartout-duo.html", "category": "concert"}, {"time": "3:30 pm", "venue": "Kino", "title": "Gesprächskonzert - SOMA", "slug": "gespraechskonzert-soma-4.html", "category": "lecture"}, {"time": "4:00 pm", "venue": "Strandbühne", "title": "Machineries", "slug": "machineries.html", "category": "concert"}, {"time": "4:00 pm", "venue": "Tonarium/Studiobühne", "title": "Aleksandra Słyż", "slug": "aleksandra-slyz.html", "category": "concert"}, {"time": "4:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Joranalogue Audio Design", "slug": "gespraechskonzert-joranalogue-4.html", "category": "lecture"}, {"time": "4:40 pm", "venue": "Sooper Corner", "title": "Hélo Moondi", "slug": "helo-moondi.html", "category": "concert"}, {"time": "5:00 pm", "venue": "Seebühne", "title": "Anushka Chkheidze + Robert Lippok", "slug": "anushka-chkheidze-robert-lippok.html", "category": "concert"}, {"time": "5:30 pm", "venue": "Kino", "title": "Gesprächskonzert - Quray", "slug": "gespraechskonzert-quray.html", "category": "lecture"}, {"time": "5:30 pm", "venue": "Stromkult Stage", "title": "Stromkult - In Conversation with Aleksandra Słyż", "slug": "stromkult-in-conversation-with-aleksandra-slyz.html", "category": "talk"}, {"time": "6:00 pm", "venue": "Strandbühne", "title": "Megan Leber", "slug": "megan-leber-2.html", "category": "concert"}, {"time": "6:40 pm", "venue": "Sooper Corner", "title": "Gudrun Gut", "slug": "gudrun-gut.html", "category": "concert"}, {"time": "7:00 pm", "venue": "Seebühne", "title": "LYDER", "slug": "lyder.html", "category": "concert"}, {"time": "8:00 pm", "venue": "Strandbühne", "title": "Tunegirl x Colin Benders", "slug": "tunegirl-x-colin-benders.html", "category": "concert"}, {"time": "9:00 pm", "venue": "Waldkater", "title": "Aftershow w/ CYRK + TBA", "slug": "aftershow-w-cyrk-tba.html", "category": "evening"}]};
+
+  const CAT_LABELS = {
+    diy:'DIY Workshop', flinta:'FLINTA*', workshop:'Workshop',
+    concert:'Concert', lecture:'Lecture Concert', talk:'Talk',
+    radio:'Radio', ambient:'Ambient', evening:'Evening', special:'Special'
+  };
+
+  const favorites = new Set(JSON.parse(localStorage.getItem('sb26-favs2') || '[]'));
+  let activeFilter = 'all';
+  let showFavs = false;
+  let activeDay = 'Thursday May 7th';
+
+  /* ── Build HTML ── */
+  function buildAll() {
+    const main = document.getElementById('main');
+    main.innerHTML = '';
+    let globalId = 0;
+
+    // Build the "all days" section first
+    const allSection = document.createElement('div');
+    allSection.className = 'day-section';
+    allSection.dataset.day = 'all';
+
+    for (const [day, events] of Object.entries(EVENTS)) {
+      const hdr = document.createElement('div');
+      hdr.className = 'day-header';
+      hdr.innerHTML = `<h2>${day}</h2><span class="count-badge" id="count-all-${day.replace(/\s/g,'_')}">${events.length} events</span>`;
+      allSection.appendChild(hdr);
+
+      const grid = document.createElement('div');
+      grid.className = 'events-grid';
+      grid.id = 'allgrid-' + day.replace(/\s/g,'_');
+
+      events.forEach((ev, i) => {
+        globalId++;
+        const id = globalId;
+        ev._id_all = id;
+        const card = buildCard(ev, id);
+        card.style.animationDelay = (i * 0.015) + 's';
+        grid.appendChild(card);
+      });
+      allSection.appendChild(grid);
+
+      const noRes = document.createElement('div');
+      noRes.className = 'no-results';
+      noRes.id = 'nores-all-' + day.replace(/\s/g,'_');
+      allSection.appendChild(noRes);
+    }
+    main.appendChild(allSection);
+
+    // Reset globalId for per-day sections so IDs don't clash
+    // Each per-day card gets a unique id via a separate counter
+    let dayId = 10000;
+
+    for (const [day, events] of Object.entries(EVENTS)) {
+      const section = document.createElement('div');
+      section.className = 'day-section' + (day === activeDay ? ' active' : '');
+      section.dataset.day = day;
+
+      const hdr = document.createElement('div');
+      hdr.className = 'day-header';
+      hdr.innerHTML = `<h2>${day}</h2><span class="count-badge" id="count-${day.replace(/\s/g,'_')}">${events.length} events</span>`;
+      section.appendChild(hdr);
+
+      const grid = document.createElement('div');
+      grid.className = 'events-grid';
+      grid.id = 'grid-' + day.replace(/\s/g,'_');
+
+      events.forEach((ev, i) => {
+        dayId++;
+        const id = dayId;
+        const card = buildCard(ev, id);
+        card.style.animationDelay = (i * 0.025) + 's';
+        grid.appendChild(card);
+      });
+      section.appendChild(grid);
+
+      const noRes = document.createElement('div');
+      noRes.className = 'no-results';
+      noRes.id = 'nores-' + day.replace(/\s/g,'_');
+      noRes.textContent = 'No events match this filter.';
+      section.appendChild(noRes);
+
+      main.appendChild(section);
+    }
+    restoreFavs();
+  }
+
+  function buildCard(ev, id) {
+    const slug = ev.slug.replace('.html','');
+    const sbUrl = BASE_URL + ev.slug;
+    const card = document.createElement('div');
+    card.className = `event-card cat-${ev.category}`;
+    card.dataset.id = id;
+    card.dataset.category = ev.category;
+    card.dataset.slug = slug;
+    if (favorites.has(id)) { card.classList.add('favorited'); }
+
+    card.innerHTML = `
+      <div class="card-band"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-time">${escHtml(ev.time)}</span>
+          <div class="meta-dot"></div>
+          <span class="card-venue">${escHtml(ev.venue)}</span>
+          <span class="type-tag">${CAT_LABELS[ev.category] || ev.category}</span>
+        </div>
+        <div class="card-title">${escHtml(ev.title)}</div>
+        <div class="card-footer">
+          <a class="sb-link" href="${sbUrl}">View on Superbooth ↗</a>
+          <button class="fav-btn${favorites.has(id) ? ' active' : ''}"><span>♥</span> Save</button>
+        </div>
+      </div>`;
+    return card;
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+
+  /* ── Filtering ── */
+  function applyFilter() {
+    const activeSections = document.querySelectorAll('.day-section.active');
+    activeSections.forEach(section => {
+      const isAll = section.dataset.day === 'all';
+      if (isAll) {
+        // For the all-days view, filter each sub-grid independently
+        Object.keys(EVENTS).forEach(day => {
+          const key = day.replace(/\s/g,'_');
+          const grid = document.getElementById('allgrid-' + key);
+          if (!grid) return;
+          const cards = grid.querySelectorAll('.event-card');
+          let visible = 0;
+          cards.forEach(card => {
+            const cat = card.dataset.category;
+            const slug = card.dataset.slug;
+            let show;
+            if (showFavs) show = favorites.has(slug);
+            else if (activeFilter === 'all') show = true;
+            else show = cat === activeFilter;
+            card.classList.toggle('hidden', !show);
+            if (show) visible++;
+          });
+          const badge = document.getElementById('count-all-' + key);
+          if (badge) badge.textContent = visible + ' event' + (visible !== 1 ? 's' : '');
+          const noRes = document.getElementById('nores-all-' + key);
+          if (noRes) noRes.style.display = visible === 0 ? 'block' : 'none';
+        });
+      } else {
+        const cards = section.querySelectorAll('.event-card');
+        let visible = 0;
+        cards.forEach(card => {
+          const cat = card.dataset.category;
+          const slug = card.dataset.slug;
+          let show;
+          if (showFavs) show = favorites.has(slug);
+          else if (activeFilter === 'all') show = true;
+          else show = cat === activeFilter;
+          card.classList.toggle('hidden', !show);
+          if (show) visible++;
+        });
+        const dayKey = section.dataset.day.replace(/\s/g,'_');
+        const badge = document.getElementById('count-' + dayKey);
+        if (badge) badge.textContent = visible + ' event' + (visible !== 1 ? 's' : '');
+        const noRes = document.getElementById('nores-' + dayKey);
+        if (noRes) noRes.style.display = visible === 0 ? 'block' : 'none';
+      }
+    });
+  }
+
+  /* ── Day tabs ── */
+  function switchDay(dayName) {
+    activeDay = dayName;
+    document.querySelectorAll('.day-tab').forEach(t => t.classList.toggle('active', t.dataset.day === dayName));
+    document.querySelectorAll('.day-section').forEach(s => s.classList.toggle('active', s.dataset.day === dayName));
+    applyFilter();
+  }
+
+  /* ── Favourites ── */
+  // Use slug as the stable key (ids differ between all-days and per-day sections)
+  function toggleFav(id, btn, card) {
+    const slug = card.dataset.slug;
+    if (favorites.has(slug)) {
+      favorites.delete(slug);
+      // unfav all cards with same slug
+      document.querySelectorAll(`.event-card[data-slug="${slug}"]`).forEach(c => {
+        c.classList.remove('favorited');
+        const b = c.querySelector('.fav-btn');
+        if (b) b.classList.remove('active');
+      });
+    } else {
+      favorites.add(slug);
+      document.querySelectorAll(`.event-card[data-slug="${slug}"]`).forEach(c => {
+        c.classList.add('favorited');
+        const b = c.querySelector('.fav-btn');
+        if (b) b.classList.add('active');
+      });
+      btn.style.transform = 'scale(1.12)';
+      setTimeout(() => btn.style.transform = '', 200);
+    }
+    localStorage.setItem('sb26-favs2', JSON.stringify([...favorites]));
+    updateFavCount();
+    if (showFavs) applyFilter();
+  }
+
+  function updateFavCount() {
+    const n = favorites.size;
+    document.getElementById('favCountText').textContent = n === 0 ? 'My favourites' : n + ' saved';
+  }
+
+  function restoreFavs() {
+    favorites.forEach(slug => {
+      document.querySelectorAll(`.event-card[data-slug="${slug}"]`).forEach(c => {
+        c.classList.add('favorited');
+        const b = c.querySelector('.fav-btn');
+        if (b) b.classList.add('active');
+      });
+    });
+    updateFavCount();
+  }
+
+  /* ── Event listeners ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    buildAll();
+
+    // Card clicks — fav and link only
+    document.getElementById('main').addEventListener('click', e => {
+      const favBtn = e.target.closest('.fav-btn');
+      if (favBtn) {
+        e.stopPropagation();
+        const card = favBtn.closest('.event-card');
+        toggleFav(parseInt(card.dataset.id), favBtn, card);
+        return;
+      }
+      const sbLink = e.target.closest('.sb-link');
+      if (sbLink) return; // let the link work normally
+
+
+    });
+
+    // Day tabs
+    document.querySelectorAll('.day-tab').forEach(tab => {
+      tab.addEventListener('click', () => { switchDay(tab.dataset.day); });
+    });
+
+    // Filter pills
+    document.querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        activeFilter = pill.dataset.filter;
+        showFavs = activeFilter === 'favorites';
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        applyFilter();
+      });
+    });
+
+    // Header fav button
+    document.getElementById('favCountBtn').addEventListener('click', () => {
+      showFavs = true;
+      activeFilter = 'favorites';
+      document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'favorites'));
+      applyFilter();
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
