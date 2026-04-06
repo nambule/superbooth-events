@@ -128,6 +128,32 @@
   .fav-btn.active { background:var(--orange); border-color:var(--orange); color:white; }
 
 
+  /* Detail button */
+  .detail-btn { display:flex; align-items:center; gap:0.3rem; background:none; border:1.5px solid var(--border); color:var(--ink-faint); font-family:'Lato',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.04em; padding:0.28rem 0.75rem; border-radius:20px; cursor:pointer; transition:all 0.15s; white-space:nowrap; flex-shrink:0; }
+  .detail-btn:hover { border-color:var(--blue); color:var(--blue); background:rgba(29,111,242,0.05); }
+  .detail-btn.loading { opacity:0.5; cursor:wait; }
+
+  /* Modal */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:500; align-items:center; justify-content:center; padding:1.5rem; backdrop-filter:blur(3px); }
+  .modal-overlay.open { display:flex; }
+  .modal-box { background:var(--white); border-radius:16px; max-width:620px; width:100%; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.22s ease; position:relative; }
+  @keyframes modalIn { from{opacity:0;transform:translateY(16px) scale(0.98)} to{opacity:1;transform:none} }
+  .modal-band { height:5px; flex-shrink:0; }
+  .modal-header { padding:1.4rem 1.6rem 0; }
+  .modal-category { display:inline-block; font-size:0.58rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.2rem 0.6rem; border-radius:20px; color:white; margin-bottom:0.75rem; }
+  .modal-title { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--ink); line-height:1.2; margin-bottom:0.85rem; }
+  .modal-meta { display:flex; flex-wrap:wrap; gap:0.55rem 1.1rem; padding-bottom:1rem; border-bottom:1px solid var(--border); }
+  .modal-meta-item { display:flex; align-items:center; gap:0.35rem; font-size:0.78rem; color:var(--ink-light); }
+  .modal-meta-item svg { flex-shrink:0; opacity:0.5; }
+  .modal-body { padding:1.1rem 1.6rem 1.5rem; overflow-y:auto; flex:1; }
+  .modal-details { font-size:0.88rem; line-height:1.8; color:var(--ink-light); font-weight:300; white-space:pre-wrap; }
+  .modal-no-details { font-family:'Cormorant Garamond',serif; font-size:1rem; font-style:italic; color:var(--ink-faint); text-align:center; padding:1.5rem 0; }
+  .modal-footer { padding:1rem 1.6rem; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-shrink:0; }
+  .modal-close { background:none; border:1.5px solid var(--border); color:var(--ink-faint); font-family:'Lato',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.04em; padding:0.35rem 1rem; border-radius:20px; cursor:pointer; transition:all 0.15s; }
+  .modal-close:hover { border-color:var(--ink); color:var(--ink); }
+  .modal-sb-link { font-size:0.68rem; font-weight:700; color:var(--white); background:var(--blue); padding:0.35rem 0.9rem; border-radius:20px; text-decoration:none; transition:background 0.15s; }
+  .modal-sb-link:hover { background:var(--blue2); }
+
   /* No results */
   .no-results { display:none; text-align:center; padding:3rem 2rem; font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-style:italic; color:var(--ink-faint); }
 
@@ -198,6 +224,38 @@
   Superbooth 2026 · Pionierpalast Berlin · <em>7 – 9 May</em>
 </div>
 
+<div class="modal-overlay" id="detailModal" role="dialog" aria-modal="true">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-band" id="modalBand"></div>
+    <div class="modal-header">
+      <div class="modal-category" id="modalCategory"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-meta">
+        <div class="modal-meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="modalDate"></span>
+        </div>
+        <div class="modal-meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="modalTime"></span>
+        </div>
+        <div class="modal-meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <span id="modalPlace"></span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-details" id="modalDetails"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-close" id="modalCloseBtn">Close</button>
+      <a class="modal-sb-link" id="modalSbLink" href="#" target="_blank" rel="noopener">View on Superbooth ↗</a>
+    </div>
+  </div>
+</div>
+
+<script src="events_data.js"></script>
 <script>
 (function() {
   const BASE_URL = 'https://www.superbooth.com/en/events/details/';
@@ -311,7 +369,8 @@
         </div>
         <div class="card-title">${escHtml(ev.title)}</div>
         <div class="card-footer">
-          <a class="sb-link" href="${sbUrl}">View on Superbooth ↗</a>
+          <button class="detail-btn">Details</button>
+          <a class="sb-link" href="${sbUrl}">Superbooth ↗</a>
           <button class="fav-btn${favorites.has(id) ? ' active' : ''}"><span>♥</span> Save</button>
         </div>
       </div>`;
@@ -424,12 +483,108 @@
     updateFavCount();
   }
 
+  /* ── Events data (from scraper output) ── */
+  let eventsDataMap = null; // slug → record, loaded lazily
+
+  function loadEventsData() {
+    if (eventsDataMap !== null) return eventsDataMap;
+    eventsDataMap = {};
+    const arr = window.EVENTS_DETAILS || [];
+    arr.forEach(rec => {
+      const slug = rec.url.split('/').pop().replace('.html', '');
+      eventsDataMap[slug] = rec;
+    });
+    return eventsDataMap;
+  }
+
+  /* ── Modal ── */
+  const CAT_COLORS = {
+    diy:'var(--orange)', flinta:'var(--teal)', workshop:'var(--blue2)',
+    concert:'var(--blue)', lecture:'var(--lime)', talk:'var(--yellow)',
+    radio:'#a855f7', ambient:'var(--teal)', evening:'#e11d48', special:'var(--ink-faint)'
+  };
+
+  function openModal(slug, ev) {
+    const overlay  = document.getElementById('detailModal');
+    const band     = document.getElementById('modalBand');
+    const catEl    = document.getElementById('modalCategory');
+    const titleEl  = document.getElementById('modalTitle');
+    const dateEl   = document.getElementById('modalDate');
+    const timeEl   = document.getElementById('modalTime');
+    const placeEl  = document.getElementById('modalPlace');
+    const bodyEl   = document.getElementById('modalDetails');
+    const sbLink   = document.getElementById('modalSbLink');
+
+    const color = CAT_COLORS[ev.category] || 'var(--ink-faint)';
+    band.style.background = color;
+    catEl.style.background = color;
+    catEl.style.color = ['lecture','talk'].includes(ev.category) ? '#333' : 'white';
+    catEl.textContent = CAT_LABELS[ev.category] || ev.category;
+    titleEl.textContent = ev.title;
+    placeEl.textContent = ev.venue;
+
+    const data = loadEventsData()[slug] || null;
+
+    if (data) {
+      // Parse date string like "2026-05-07" to a readable label
+      const d = new Date(data.date + 'T00:00:00');
+      const dateStr = d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+      dateEl.textContent = dateStr;
+      // Time comes from the scraped page — strip the leading date portion if present
+      const rawTime = data.time || ev.time;
+      timeEl.textContent = rawTime.replace(/^\d{4}-\d{2}-\d{2},\s*/, '');
+      sbLink.href = data.url;
+      if (data.details) {
+        bodyEl.className = 'modal-details';
+        bodyEl.textContent = data.details;
+      } else {
+        bodyEl.className = 'modal-no-details';
+        bodyEl.textContent = 'No description available for this event.';
+      }
+    } else {
+      // JSON not loaded yet or slug not found — show what we have
+      dateEl.textContent = ev.time;
+      timeEl.textContent = ev.venue;
+      placeEl.textContent = '';
+      bodyEl.className = 'modal-no-details';
+      bodyEl.textContent = eventsDataMap === null
+        ? 'Loading details…'
+        : 'Run the scraper (python3 scrape_events.py) to load event descriptions.';
+      sbLink.href = BASE_URL + ev.slug;
+    }
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('detailModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
   /* ── Event listeners ── */
   document.addEventListener('DOMContentLoaded', () => {
     buildAll();
+    loadEventsData(); // preload into cache
 
     // Card clicks — fav and link only
     document.getElementById('main').addEventListener('click', e => {
+      const detailBtn = e.target.closest('.detail-btn');
+      if (detailBtn) {
+        e.stopPropagation();
+        const card = detailBtn.closest('.event-card');
+        const slug = card.dataset.slug;
+        // Find event data from EVENTS object
+        let evObj = null;
+        for (const events of Object.values(EVENTS)) {
+          evObj = events.find(ev => ev.slug.replace('.html','') === slug);
+          if (evObj) break;
+        }
+        if (!evObj) return;
+        openModal(slug, evObj);
+        return;
+      }
+
       const favBtn = e.target.closest('.fav-btn');
       if (favBtn) {
         e.stopPropagation();
@@ -439,8 +594,6 @@
       }
       const sbLink = e.target.closest('.sb-link');
       if (sbLink) return; // let the link work normally
-
-
     });
 
     // Day tabs
@@ -465,6 +618,15 @@
       activeFilter = 'favorites';
       document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'favorites'));
       applyFilter();
+    });
+
+    // Modal close
+    document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+    document.getElementById('detailModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
     });
   });
 
