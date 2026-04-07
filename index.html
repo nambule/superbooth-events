@@ -78,7 +78,7 @@
   .event-card { background:var(--white); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; transition:box-shadow 0.2s,transform 0.2s; display:flex; flex-direction:column; position:relative; animation:rise 0.35s ease both; }
   @keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
   .event-card:hover { box-shadow:0 6px 28px rgba(0,0,0,0.09); transform:translateY(-2px); }
-  .event-card.favorited { border-color:var(--orange); box-shadow:0 0 0 2px var(--orange); }
+  .event-card.favorited { border-color:var(--orange); box-shadow:0 0 0 3px var(--orange); }
   .event-card.favorited::after { content:'♥ Saved'; position:absolute; top:12px; right:-1px; background:var(--orange); color:white; font-family:'Lato',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; padding:0.2rem 0.55rem 0.2rem 0.48rem; border-radius:4px 0 0 4px; pointer-events:none; z-index:3; }
   .event-card.favorited .card-title { color:var(--orange); }
   .event-card.favorited .fav-btn { background:var(--orange); border-color:var(--orange); color:white; }
@@ -165,10 +165,54 @@
   .day-section[data-day="all"] .day-header { margin-top:2.5rem; }
   .day-section[data-day="all"] .day-header:first-child { margin-top:0; }
 
+  /* ── Plan / Timeline View ── */
+  .view-toggle { display:flex; align-items:center; margin-left:auto; padding:0.6rem 0; }
+  .view-btn { background:none; border:1.5px solid var(--border); color:var(--ink-faint); font-family:'Lato',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.04em; padding:0.3rem 0.9rem; cursor:pointer; transition:all 0.15s; }
+  .view-btn:first-child { border-radius:20px 0 0 20px; border-right-width:0; }
+  .view-btn:last-child { border-radius:0 20px 20px 0; }
+  .view-btn.active { background:var(--blue); border-color:var(--blue); color:white; }
+  .view-btn:not(.active):hover { border-color:var(--blue); color:var(--blue); background:rgba(29,111,242,0.05); }
+
+  #plan-view { max-width:1180px; margin:0 auto; padding:2rem 2.5rem; }
+  .plan-section { margin-bottom:2.5rem; }
+  .plan-day-label { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--ink); padding:0 0 1rem; display:flex; align-items:center; gap:1.25rem; }
+  .plan-day-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .plan-scroll { overflow-x:auto; border:1.5px solid var(--border); border-radius:12px; background:var(--white); }
+  .plan-table { min-width:1350px; }
+  .plan-row { display:flex; border-bottom:1px solid var(--border); align-items:stretch; }
+  .plan-row:last-child { border-bottom:none; }
+  .plan-header-row { background:var(--bg); border-bottom:2px solid var(--border); }
+  .plan-venue-col { width:155px; min-width:155px; padding:0 0.85rem; display:flex; align-items:center; position:sticky; left:0; z-index:5; background:var(--white); border-right:1px solid var(--border); font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.9rem; color:var(--ink-light); line-height:1.3; word-break:break-word; }
+  .plan-header-row .plan-venue-col { background:var(--bg); font-family:'Lato',sans-serif; font-style:normal; font-size:0.58rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); }
+  .plan-axis-area { flex:1; position:relative; }
+  .plan-header-row .plan-axis-area { height:26px; }
+  .plan-gridline { position:absolute; top:0; bottom:0; width:1px; background:rgba(0,0,0,0.07); pointer-events:none; z-index:0; }
+  .plan-gridline-half { background:rgba(0,0,0,0.03); }
+  .plan-tick-label { position:absolute; top:0; bottom:0; display:flex; align-items:center; padding-left:4px; font-size:0.57rem; font-weight:700; letter-spacing:0.06em; color:var(--ink-faint); pointer-events:none; white-space:nowrap; }
+  .plan-event-block { position:absolute; border-radius:5px; cursor:pointer; overflow:hidden; display:flex; align-items:center; padding:0 6px; z-index:2; box-sizing:border-box; border:1px solid rgba(0,0,0,0.12); transition:filter 0.12s; }
+  .plan-event-block:hover { filter:brightness(0.84); z-index:10; }
+  .plan-event-block.cat-diy      { background:var(--orange); }
+  .plan-event-block.cat-flinta   { background:var(--teal); }
+  .plan-event-block.cat-workshop { background:var(--blue2); }
+  .plan-event-block.cat-concert  { background:var(--blue); }
+  .plan-event-block.cat-lecture  { background:var(--lime); }
+  .plan-event-block.cat-talk     { background:var(--yellow); }
+  .plan-event-block.cat-radio    { background:#a855f7; }
+  .plan-event-block.cat-ambient  { background:var(--teal); }
+  .plan-event-block.cat-evening  { background:#e11d48; }
+  .plan-event-block.cat-special  { background:var(--ink-faint); }
+  .plan-event-title { font-family:'Lato',sans-serif; font-size:0.67rem; font-weight:700; color:white; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; line-height:1; }
+  .plan-event-block.cat-lecture .plan-event-title,
+  .plan-event-block.cat-talk    .plan-event-title { color:#4a3500; }
+  .plan-event-block.plan-muted { opacity:0.1; pointer-events:none; }
+  .plan-fav-dot { display:none; position:absolute; top:3px; right:4px; width:18px; height:18px; background:white; border-radius:50%; font-size:0.65rem; line-height:18px; text-align:center; color:var(--orange); pointer-events:none; z-index:3; }
+  .plan-event-block.plan-fav-ring .plan-fav-dot { display:block; }
+
   @media (max-width:700px) {
     .events-grid { grid-template-columns:1fr; }
     header,.filter-bar,.day-tabs,main,.hero-band { padding-left:1.25rem; padding-right:1.25rem; }
     .day-tab { padding:0.9rem 0.9rem; font-size:0.76rem; }
+    #plan-view { padding-left:1.25rem; padding-right:1.25rem; }
   }
 </style>
 </head>
@@ -200,6 +244,10 @@
   <button class="day-tab active" data-day="Thursday May 7th">Thursday 7 May</button>
   <button class="day-tab" data-day="Friday May 8th">Friday 8 May</button>
   <button class="day-tab" data-day="Saturday May 9th">Saturday 9 May</button>
+  <div class="view-toggle">
+    <button class="view-btn active" data-view="cards">Cards</button>
+    <button class="view-btn" data-view="plan">Plan</button>
+  </div>
 </div>
 
 <div class="filter-bar">
@@ -219,6 +267,7 @@
 </div>
 
 <main id="main"></main>
+<div id="plan-view" style="display:none"></div>
 
 <div class="page-footer">
   Superbooth 2026 · Pionierpalast Berlin · <em>7 – 9 May</em>
@@ -250,6 +299,7 @@
     </div>
     <div class="modal-footer">
       <button class="modal-close" id="modalCloseBtn">Close</button>
+      <button class="fav-btn" id="modalFavBtn"><span>♥</span> Save</button>
       <a class="modal-sb-link" id="modalSbLink" href="#" target="_blank" rel="noopener">View on Superbooth ↗</a>
     </div>
   </div>
@@ -430,6 +480,7 @@
         if (noRes) noRes.style.display = visible === 0 ? 'block' : 'none';
       }
     });
+    if (activeView === 'plan') applyPlanFilter();
   }
 
   /* ── Day tabs ── */
@@ -438,6 +489,7 @@
     document.querySelectorAll('.day-tab').forEach(t => t.classList.toggle('active', t.dataset.day === dayName));
     document.querySelectorAll('.day-section').forEach(s => s.classList.toggle('active', s.dataset.day === dayName));
     applyFilter();
+    if (activeView === 'plan') buildPlanView();
   }
 
   /* ── Favourites ── */
@@ -465,6 +517,7 @@
     localStorage.setItem('sb26-favs2', JSON.stringify([...favorites]));
     updateFavCount();
     if (showFavs) applyFilter();
+    else applyPlanFilter();
   }
 
   function updateFavCount() {
@@ -553,6 +606,10 @@
       sbLink.href = BASE_URL + ev.slug;
     }
 
+    const modalFavBtn = document.getElementById('modalFavBtn');
+    modalFavBtn.dataset.slug = slug;
+    modalFavBtn.classList.toggle('active', favorites.has(slug));
+
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -560,6 +617,244 @@
   function closeModal() {
     document.getElementById('detailModal').classList.remove('open');
     document.body.style.overflow = '';
+  }
+
+  /* ── Plan / Timeline View ── */
+  const PLAN_START_MIN = 600;  // 10:00
+  const PLAN_END_MIN   = 1320; // 22:00
+  const PLAN_TOTAL     = PLAN_END_MIN - PLAN_START_MIN; // 720 min
+
+  let activeView = 'cards';
+
+  function parseTimeMin(str) {
+    const m = str.match(/(\d+):(\d+)\s*(am|pm)/i);
+    if (!m) return PLAN_START_MIN;
+    let h = parseInt(m[1]);
+    const min = parseInt(m[2]);
+    if (m[3].toLowerCase() === 'pm' && h !== 12) h += 12;
+    if (m[3].toLowerCase() === 'am' && h === 12) h = 0;
+    return h * 60 + min;
+  }
+
+  function computeEventMeta(rawEvents) {
+    const detailsMap = loadEventsData();
+    const result = rawEvents.map(ev => {
+      const slug = ev.slug.replace('.html', '');
+      const detail = detailsMap[slug];
+      const startMin = parseTimeMin(ev.time);
+      let durationMin = null;
+      if (detail && detail.time) {
+        const timeStr = detail.time.replace(/^\d{4}-\d{2}-\d{2},\s*/, '');
+        const parts = timeStr.split('–');
+        if (parts.length === 2) {
+          const endMin = parseTimeMin(parts[1].trim());
+          if (endMin > startMin) durationMin = endMin - startMin;
+        }
+      }
+      return { ...ev, startMin, durationMin, lane: 0, maxLanes: 1 };
+    });
+
+    // Group by venue for duration estimation and lane assignment
+    const byVenue = {};
+    result.forEach(ev => { (byVenue[ev.venue] = byVenue[ev.venue] || []).push(ev); });
+
+    Object.values(byVenue).forEach(ves => {
+      ves.sort((a, b) => a.startMin - b.startMin);
+
+      // Estimate duration for events without scraped end time
+      for (let i = 0; i < ves.length; i++) {
+        if (ves[i].durationMin !== null) continue;
+        let nextStart = PLAN_END_MIN;
+        for (let j = i + 1; j < ves.length; j++) {
+          if (ves[j].startMin > ves[i].startMin) { nextStart = ves[j].startMin; break; }
+        }
+        ves[i].durationMin = Math.max(Math.min(nextStart - ves[i].startMin, 90), 30);
+      }
+
+      // Greedy lane assignment for overlapping events
+      const laneEnd = [];
+      ves.forEach(ev => {
+        let lane = laneEnd.findIndex(end => end <= ev.startMin);
+        if (lane === -1) { lane = laneEnd.length; laneEnd.push(0); }
+        ev.lane = lane;
+        laneEnd[lane] = ev.startMin + ev.durationMin;
+      });
+      const maxLanes = laneEnd.length;
+      ves.forEach(ev => ev.maxLanes = maxLanes);
+    });
+
+    return result;
+  }
+
+  function buildAxisHeaderRow() {
+    const row = document.createElement('div');
+    row.className = 'plan-row plan-header-row';
+    const vc = document.createElement('div');
+    vc.className = 'plan-venue-col';
+    vc.textContent = 'Venue';
+    row.appendChild(vc);
+    const axis = document.createElement('div');
+    axis.className = 'plan-axis-area';
+    for (let h = 10; h <= 22; h++) {
+      const pct = ((h * 60 - PLAN_START_MIN) / PLAN_TOTAL * 100).toFixed(3);
+      const line = document.createElement('div');
+      line.className = 'plan-gridline';
+      line.style.left = pct + '%';
+      axis.appendChild(line);
+      const label = document.createElement('div');
+      label.className = 'plan-tick-label';
+      label.style.left = pct + '%';
+      label.textContent = h + ':00';
+      axis.appendChild(label);
+      if (h < 22) {
+        const half = document.createElement('div');
+        half.className = 'plan-gridline plan-gridline-half';
+        half.style.left = (((h * 60 + 30) - PLAN_START_MIN) / PLAN_TOTAL * 100).toFixed(3) + '%';
+        axis.appendChild(half);
+      }
+    }
+    row.appendChild(axis);
+    return row;
+  }
+
+  function planEventVisible(ev) {
+    const slug = ev.slug.replace('.html', '');
+    if (showFavs) return favorites.has(slug);
+    if (activeFilter === 'all') return true;
+    return ev.category === activeFilter;
+  }
+
+  function buildVenueRow(venue, venueEvents) {
+    const LANE_H = 40;
+    const PAD = 8;
+    const maxLanes = Math.max(...venueEvents.map(e => e.maxLanes), 1);
+    const rowHeight = maxLanes * LANE_H + PAD;
+
+    const row = document.createElement('div');
+    row.className = 'plan-row';
+    row.style.height = rowHeight + 'px';
+
+    const vc = document.createElement('div');
+    vc.className = 'plan-venue-col';
+    vc.textContent = venue;
+    row.appendChild(vc);
+
+    const axis = document.createElement('div');
+    axis.className = 'plan-axis-area';
+
+    // Background gridlines
+    for (let h = 10; h <= 22; h++) {
+      const pct = ((h * 60 - PLAN_START_MIN) / PLAN_TOTAL * 100).toFixed(3);
+      const line = document.createElement('div');
+      line.className = 'plan-gridline';
+      line.style.left = pct + '%';
+      axis.appendChild(line);
+      if (h < 22) {
+        const half = document.createElement('div');
+        half.className = 'plan-gridline plan-gridline-half';
+        half.style.left = (((h * 60 + 30) - PLAN_START_MIN) / PLAN_TOTAL * 100).toFixed(3) + '%';
+        axis.appendChild(half);
+      }
+    }
+
+    venueEvents.forEach(ev => {
+      const slug = ev.slug.replace('.html', '');
+      const leftPct = ((ev.startMin - PLAN_START_MIN) / PLAN_TOTAL * 100).toFixed(3);
+      const widthPct = (ev.durationMin / PLAN_TOTAL * 100).toFixed(3);
+      const top = PAD / 2 + ev.lane * LANE_H;
+      const height = LANE_H - 4;
+
+      const block = document.createElement('div');
+      block.className = `plan-event-block cat-${ev.category}${planEventVisible(ev) ? '' : ' plan-muted'}`;
+      if (favorites.has(slug)) block.classList.add('plan-fav-ring');
+      block.style.cssText = `left:${leftPct}%;width:calc(${widthPct}% - 3px);top:${top}px;height:${height}px;`;
+      block.dataset.slug = slug;
+      block.title = `${ev.time}  ${ev.title}`;
+
+      const dot = document.createElement('span');
+      dot.className = 'plan-fav-dot';
+      dot.textContent = '♥';
+      block.appendChild(dot);
+
+      const title = document.createElement('span');
+      title.className = 'plan-event-title';
+      title.textContent = ev.title;
+      block.appendChild(title);
+
+      block.addEventListener('click', () => openModal(slug, ev));
+      axis.appendChild(block);
+    });
+
+    row.appendChild(axis);
+    return row;
+  }
+
+  function buildPlanSection(day, rawEvents) {
+    const section = document.createElement('div');
+    section.className = 'plan-section';
+
+    if (activeDay === 'all') {
+      const lbl = document.createElement('div');
+      lbl.className = 'plan-day-label';
+      lbl.textContent = day;
+      section.appendChild(lbl);
+    }
+
+    const events = computeEventMeta(rawEvents);
+
+    // Collect venues in order of first appearance
+    const venueOrder = [];
+    const seen = new Set();
+    rawEvents.forEach(ev => { if (!seen.has(ev.venue)) { venueOrder.push(ev.venue); seen.add(ev.venue); } });
+
+    const scroll = document.createElement('div');
+    scroll.className = 'plan-scroll';
+    const table = document.createElement('div');
+    table.className = 'plan-table';
+
+    table.appendChild(buildAxisHeaderRow());
+    venueOrder.forEach(venue => {
+      table.appendChild(buildVenueRow(venue, events.filter(e => e.venue === venue)));
+    });
+
+    scroll.appendChild(table);
+    section.appendChild(scroll);
+    return section;
+  }
+
+  function buildPlanView() {
+    const el = document.getElementById('plan-view');
+    el.innerHTML = '';
+    if (activeDay === 'all') {
+      Object.entries(EVENTS).forEach(([day, evs]) => el.appendChild(buildPlanSection(day, evs)));
+    } else {
+      const evs = EVENTS[activeDay];
+      if (evs) el.appendChild(buildPlanSection(activeDay, evs));
+    }
+  }
+
+  function applyPlanFilter() {
+    document.querySelectorAll('#plan-view .plan-event-block').forEach(block => {
+      const slug = block.dataset.slug;
+      let show;
+      if (showFavs) show = favorites.has(slug);
+      else if (activeFilter === 'all') show = true;
+      else {
+        const cat = [...block.classList].find(c => /^cat-\w/.test(c))?.replace('cat-', '');
+        show = cat === activeFilter;
+      }
+      block.classList.toggle('plan-muted', !show);
+      block.classList.toggle('plan-fav-ring', favorites.has(slug));
+    });
+  }
+
+  function switchView(view) {
+    activeView = view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    document.getElementById('main').style.display = view === 'cards' ? '' : 'none';
+    const planEl = document.getElementById('plan-view');
+    planEl.style.display = view === 'plan' ? 'block' : 'none';
+    if (view === 'plan') buildPlanView();
   }
 
   /* ── Event listeners ── */
@@ -618,6 +913,38 @@
       activeFilter = 'favorites';
       document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'favorites'));
       applyFilter();
+    });
+
+    // View toggle
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchView(btn.dataset.view));
+    });
+
+    // Modal fav button
+    document.getElementById('modalFavBtn').addEventListener('click', () => {
+      const btn = document.getElementById('modalFavBtn');
+      const slug = btn.dataset.slug;
+      if (!slug) return;
+      if (favorites.has(slug)) {
+        favorites.delete(slug);
+        btn.classList.remove('active');
+        document.querySelectorAll(`.event-card[data-slug="${slug}"]`).forEach(c => {
+          c.classList.remove('favorited');
+          const b = c.querySelector('.fav-btn'); if (b) b.classList.remove('active');
+        });
+      } else {
+        favorites.add(slug);
+        btn.classList.add('active');
+        btn.style.transform = 'scale(1.12)';
+        setTimeout(() => btn.style.transform = '', 200);
+        document.querySelectorAll(`.event-card[data-slug="${slug}"]`).forEach(c => {
+          c.classList.add('favorited');
+          const b = c.querySelector('.fav-btn'); if (b) b.classList.add('active');
+        });
+      }
+      localStorage.setItem('sb26-favs2', JSON.stringify([...favorites]));
+      updateFavCount();
+      if (showFavs) applyFilter(); else applyPlanFilter();
     });
 
     // Modal close
