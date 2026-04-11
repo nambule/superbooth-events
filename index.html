@@ -22,7 +22,7 @@
     --border: #e5e5e5;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--ink); font-family:'Lato',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:3.5rem; }
+  body { background:var(--bg); color:var(--ink); font-family:'Lato',sans-serif; min-height:100vh; overflow-x:hidden; }
 
   /* Header */
   header { background:var(--white); border-bottom:2px solid var(--ink); padding:0 2.5rem; position:sticky; top:0; z-index:100; }
@@ -158,8 +158,10 @@
   .no-results { display:none; text-align:center; padding:3rem 2rem; font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-style:italic; color:var(--ink-faint); }
 
   /* Page footer */
-  .page-footer { background:var(--ink); color:#666; text-align:center; padding:1rem; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; position:fixed; bottom:0; left:0; right:0; z-index:100; }
+  .page-footer { background:var(--ink); color:#666; text-align:center; padding:1rem; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; margin-top:2rem; }
   .page-footer em { color:var(--blue); font-style:normal; }
+  .page-footer a { color:#cfcfcf; text-decoration:none; }
+  .page-footer a:hover { color:var(--white); }
 
   /* All-days view: space between day blocks */
   .day-section[data-day="all"] .day-header { margin-top:2.5rem; }
@@ -289,7 +291,7 @@
 <div id="plan-view" style="display:none"></div>
 
 <div class="page-footer">
-  Superbooth 2026 · Pionierpalast Berlin · <em>7 – 9 May</em>
+  <a href="https://forms.gle/NfCMCjZbAm2NqL5y6" target="_blank" rel="noopener">Feedback</a>
 </div>
 
 <div class="modal-overlay" id="detailModal" role="dialog" aria-modal="true">
