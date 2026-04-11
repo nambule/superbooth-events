@@ -167,11 +167,12 @@
 
   /* ── Plan / Timeline View ── */
   .view-toggle { display:flex; align-items:center; margin-left:auto; padding:0.6rem 0; }
-  .view-btn { background:none; border:1.5px solid var(--border); color:var(--ink-faint); font-family:'Lato',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.04em; padding:0.3rem 0.9rem; cursor:pointer; transition:all 0.15s; }
+  .view-btn { display:flex; align-items:center; gap:0.38rem; background:none; border:1.5px solid var(--border); color:var(--ink-light); font-family:'Lato',sans-serif; font-size:0.73rem; font-weight:700; letter-spacing:0.03em; padding:0.45rem 0.95rem; cursor:pointer; transition:all 0.15s; }
   .view-btn:first-child { border-radius:20px 0 0 20px; border-right-width:0; }
   .view-btn:last-child { border-radius:0 20px 20px 0; }
   .view-btn.active { background:var(--blue); border-color:var(--blue); color:white; }
   .view-btn:not(.active):hover { border-color:var(--blue); color:var(--blue); background:rgba(29,111,242,0.05); }
+  .view-btn svg { width:14px; height:14px; flex-shrink:0; }
 
   #plan-view { max-width:1180px; margin:0 auto; padding:2rem 2.5rem; }
   .plan-section { margin-bottom:2.5rem; }
@@ -240,13 +241,31 @@
 </div>
 
 <div class="day-tabs">
-  <button class="day-tab" data-day="all">All Days</button>
-  <button class="day-tab active" data-day="Thursday May 7th">Thursday 7 May</button>
+  <button class="day-tab active" data-day="all">All Days</button>
+  <button class="day-tab" data-day="Thursday May 7th">Thursday 7 May</button>
   <button class="day-tab" data-day="Friday May 8th">Friday 8 May</button>
   <button class="day-tab" data-day="Saturday May 9th">Saturday 9 May</button>
   <div class="view-toggle">
-    <button class="view-btn active" data-view="cards">Cards</button>
-    <button class="view-btn" data-view="plan">Plan</button>
+    <button class="view-btn active" data-view="cards" aria-label="Cards view">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="4" width="7" height="7" rx="1"></rect>
+        <rect x="3" y="13" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="13" width="7" height="7" rx="1"></rect>
+      </svg>
+      <span>Cards</span>
+    </button>
+    <button class="view-btn" data-view="plan" aria-label="Timeline view">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="4" y1="6" x2="20" y2="6"></line>
+        <line x1="4" y1="12" x2="20" y2="12"></line>
+        <line x1="4" y1="18" x2="20" y2="18"></line>
+        <rect x="7" y="4.5" width="5" height="3" rx="1.5"></rect>
+        <rect x="12" y="10.5" width="7" height="3" rx="1.5"></rect>
+        <rect x="5" y="16.5" width="9" height="3" rx="1.5"></rect>
+      </svg>
+      <span>Timeline</span>
+    </button>
   </div>
 </div>
 
@@ -320,7 +339,7 @@
   const favorites = new Set(JSON.parse(localStorage.getItem('sb26-favs2') || '[]'));
   let activeFilter = 'all';
   let showFavs = false;
-  let activeDay = 'Thursday May 7th';
+  let activeDay = 'all';
 
   /* ── Build HTML ── */
   function buildAll() {
@@ -330,7 +349,7 @@
 
     // Build the "all days" section first
     const allSection = document.createElement('div');
-    allSection.className = 'day-section';
+    allSection.className = 'day-section' + (activeDay === 'all' ? ' active' : '');
     allSection.dataset.day = 'all';
 
     for (const [day, events] of Object.entries(EVENTS)) {
